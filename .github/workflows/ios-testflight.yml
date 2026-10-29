@@ -1,7 +1,8 @@
 # Word Duel iOS build -> TestFlight (free: local EAS build on GitHub's macOS runner, no EAS build quota)
 # Run: GitHub > Actions > "iOS TestFlight" > Run workflow
 # Required secret: EXPO_TOKEN (expo.dev > Account settings > Access tokens)
-# If the Actions tab is missing: Settings > Actions > General > Allow all actions
+# If the Actions tab is missing: Settings > Actions > General > Allow all actions, then push any commit
+# (GitHub only registers workflows on a push made while Actions is enabled).
 name: iOS TestFlight
 
 on:
