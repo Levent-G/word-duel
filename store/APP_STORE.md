@@ -1,6 +1,6 @@
 # Word Duel — App Store Connect metinleri
 
-Her alanı olduğu gibi kopyala. Karakter sınırları sayıldı. `levent_gulsum@outlook.com` gördüğün yere kendi destek e-postanı yaz.
+Her alanı olduğu gibi kopyala. Karakter sınırları sayıldı. App Store Connect açıklama ve tanıtım metinlerinde emoji kabul etmiyor. `levent_gulsum@outlook.com` gördüğün yere kendi destek e-postanı yaz.
 
 ## 1. Uygulama Bilgileri (App Information)
 
@@ -32,7 +32,7 @@ Word Duel ile İngilizce kelime öğrenmek bir yarışmaya dönüşüyor. Rakibi
 ONLINE DÜELLO
 • Puanı sana yakın gerçek oyuncularla eşleş, 10 soruluk canlı maçlar yap.
 • Rakibinin cevabını anlık gör: o cevap verince puanı artar, sen cevaplayınca hangi şıkkı seçtiğini görürsün.
-• Hazır tepkiler gönder: 👏 İyi oyun, 😮 Vay!, 😅 Kıl payı, 🔥 Hızlısın.
+• Hazır tepkiler gönder: İyi oyun, Vay!, Kıl payı, Hızlısın.
 • Maç bitince rövanş iste, aynı rakiple hemen tekrar oyna.
 • Rakip bulunamazsa ya da internet yoksa botlara karşı oyna.
 
@@ -132,7 +132,7 @@ Word Duel turns learning English vocabulary into a head-to-head game. You and yo
 ONLINE DUELS
 • Get matched with real players near your rating for live 10-question matches.
 • See your opponent's answers in real time.
-• Send preset reactions: 👏 Good game, 😮 Wow!, 😅 So close, 🔥 You're fast.
+• Send preset reactions: Good game, Wow!, So close, You're fast.
 • Ask for a rematch with the same opponent right after the match.
 • No opponent or no internet? Play against bots.
 
