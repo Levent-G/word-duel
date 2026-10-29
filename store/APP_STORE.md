@@ -64,15 +64,15 @@ düello,yarışma,quiz,sözlük,kelime oyunu,öğren,ielts,yds,toefl,vocabulary,
 
 ### Destek URL'si
 
-https://word-duel.expo.app
+https://leventgulsum-word-duel.expo.app
 
 ### Pazarlama URL'si (isteğe bağlı)
 
-https://word-duel.expo.app
+https://leventgulsum-word-duel.expo.app
 
 ### Gizlilik politikası URL'si (Uygulama Gizliliği sayfasında)
 
-https://word-duel.expo.app/privacy
+https://leventgulsum-word-duel.expo.app/privacy
 
 ### Bu sürümdeki yenilikler (ilk sürümde istenmez)
 

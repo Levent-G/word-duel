@@ -14,8 +14,8 @@ Firebase konsolu → Realtime Database → **Rules** → içini sil → `databas
 npm run site
 ```
 İlk seferde alt alan adı sorarsa **word-duel** yaz. Bittiğinde tarayıcıda aç ve kontrol et:
-- https://word-duel.expo.app
-- https://word-duel.expo.app/privacy
+- https://leventgulsum-word-duel.expo.app
+- https://leventgulsum-word-duel.expo.app/privacy
 
 Farklı bir adres verirse onu Claude'a söyle; uygulamadaki bağlantılar (`src/config.js`) ve metinler güncellenmeli.
 
