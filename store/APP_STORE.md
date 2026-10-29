@@ -6,7 +6,8 @@ Her alanı olduğu gibi kopyala. Karakter sınırları sayıldı. `levent_gulsum
 
 | Alan | Değer |
 |---|---|
-| Ad (en fazla 30) | Word Duel: İngilizce Kelime |
+| Ad (en fazla 30) | Word Duel |
+| Apple ID | 6828526837 |
 | Alt başlık (en fazla 30) | Online kelime düellosu ve lig |
 | Birincil dil | Türkçe |
 | Bundle ID | com.leventgulsum.wordduel |
@@ -16,7 +17,7 @@ Her alanı olduğu gibi kopyala. Karakter sınırları sayıldı. `levent_gulsum
 | Telif hakkı | 2026 Mustafa Gülsüm |
 | Fiyat | Ücretsiz (tüm ülkeler) |
 
-> "Word Duel: İngilizce Kelime" adı alınmışsa: "Word Duel - Kelime Düellosu" (27) veya "WordDuel: İngilizce Düello" (25).
+> Uygulama App Store Connect'te "Word Duel" adıyla oluşturuldu. Arama için "İngilizce" ve "kelime" kelimeleri alt başlıkta ve anahtar kelimelerde var.
 
 ## 2. Sürüm sayfası (1.0)
 
