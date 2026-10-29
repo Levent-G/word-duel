@@ -1,0 +1,11 @@
+# Files not uploaded to EAS Build (the project is not a git repository, so .gitignore is not used).
+node_modules/
+.expo/
+dist/
+web-build/
+*.log
+.env
+.DS_Store
+store/
+scripts/
+assets/logo-preview.png

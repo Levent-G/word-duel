@@ -1,0 +1,113 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.child('name').isString() && newData.child('name').val().length <= 24"
+      }
+    },
+    "history": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "queue": {
+      "$level": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$uid": {
+          ".validate": "newData.child('rating').isNumber() && newData.child('at').isNumber()"
+        }
+      }
+    },
+    "pending": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null"
+      }
+    },
+    "rooms": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    "matches": {
+      "$id": {
+        ".read": "auth != null && data.child('players').child(auth.uid).exists()",
+        ".write": "auth != null && !data.exists() && newData.child('players').child(auth.uid).exists()",
+        ".validate": "newData.child('kind').val() === 'online' || newData.child('kind').val() === 'friend'",
+        "answers": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('matches').child($id).child('players').child(auth.uid).exists()",
+            "$i": {
+              ".validate": "!data.exists() && newData.child('t').isNumber() && newData.child('t').val() <= 10"
+            }
+          }
+        },
+        "presence": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('matches').child($id).child('players').child(auth.uid).exists()"
+          }
+        },
+        "reactions": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('matches').child($id).child('players').child(auth.uid).exists()",
+            ".validate": "newData.child('k').isString() && newData.child('k').val().length <= 8"
+          }
+        },
+        "rematch": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('matches').child($id).child('players').child(auth.uid).exists()",
+            ".validate": "newData.isBoolean()"
+          }
+        }
+      }
+    },
+    "leagues": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.child('tier').isNumber() && newData.child('tier').val() >= 0 && newData.child('tier').val() <= 4 && newData.child('week').isString() && ((!data.exists() && newData.child('tier').val() === 0) || (data.exists() && data.child('week').val() !== newData.child('week').val() && newData.child('tier').val() - data.child('tier').val() <= 1 && data.child('tier').val() - newData.child('tier').val() <= 1))"
+      }
+    },
+    "reports": {
+      "$target": {
+        "$id": {
+          ".write": "auth != null && !data.exists() && newData.child('by').val() === auth.uid && auth.uid !== $target",
+          ".validate": "newData.child('reason').isString() && newData.child('reason').val().length <= 10"
+        }
+      }
+    },
+    "ratingsUsed": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !newData.exists()",
+        "$matchId": {
+          ".write": "auth != null && auth.uid === $uid && !data.exists()",
+          ".validate": "newData.val() === true && root.child('matches').child($matchId).child('players').child($uid).exists() && root.child('matches').child($matchId).child('kind').val() === 'online'"
+        }
+      }
+    },
+    "ratings": {
+      ".read": "auth != null",
+      ".indexOn": ["rating"],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.child('rating').isNumber() && newData.child('matches').isNumber() && newData.child('wins').isNumber() && newData.child('name').isString() && newData.child('name').val().length <= 24 && newData.child('lastMatch').isString() && !root.child('ratingsUsed').child($uid).child(newData.child('lastMatch').val()).exists() && newData.parent().parent().child('ratingsUsed').child($uid).child(newData.child('lastMatch').val()).val() === true && newData.child('wins').val() <= newData.child('matches').val() && ((!data.exists() && newData.child('matches').val() === 1 && newData.child('rating').val() >= 960 && newData.child('rating').val() <= 1040) || (data.exists() && newData.child('matches').val() === data.child('matches').val() + 1 && newData.child('rating').val() - data.child('rating').val() <= 40 && data.child('rating').val() - newData.child('rating').val() <= 40))"
+      }
+    },
+    "weekly": {
+      "$week": {
+        ".read": "auth != null",
+        ".indexOn": ["points"],
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.child('points').isNumber() && newData.child('name').isString() && newData.child('lastMatch').isString() && newData.child('tier').val() === root.child('leagues').child($uid).child('tier').val() && root.child('leagues').child($uid).child('week').val() === $week && !root.child('ratingsUsed').child($uid).child(newData.child('lastMatch').val()).exists() && newData.parent().parent().parent().child('ratingsUsed').child($uid).child(newData.child('lastMatch').val()).val() === true && newData.child('points').val() - (data.exists() ? data.child('points').val() : 0) >= 0 && newData.child('points').val() - (data.exists() ? data.child('points').val() : 0) <= 1000"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "base": {
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "AIzaSyBJYabI09hJfoIrk7cQhpfdBKJRCBV4AIw",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "ileri-react-redux-bae86.firebaseapp.com",
+        "EXPO_PUBLIC_FIREBASE_DATABASE_URL": "https://ileri-react-redux-bae86-default-rtdb.europe-west1.firebasedatabase.app",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "ileri-react-redux-bae86",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "1:844529974253:web:066b9348e62db1c672c5e4"
+      }
+    },
+    "preview": {
+      "extends": "base",
+      "distribution": "internal"
+    },
+    "production": {
+      "extends": "base",
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

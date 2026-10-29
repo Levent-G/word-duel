@@ -1,0 +1,46 @@
+{
+  "name": "word-duel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "words": "node scripts/build-words.mjs",
+    "brand": "node scripts/build-brand.mjs",
+    "sounds": "node scripts/build-sounds.mjs",
+    "screenshots": "node scripts/resize-screenshots.mjs",
+    "site": "npx eas-cli@latest deploy --export-dir store/site --prod",
+    "build:ios": "set EAS_NO_VCS=1&& npx eas-cli@latest build --platform ios --profile production",
+    "submit:ios": "set EAS_NO_VCS=1&& npx eas-cli@latest submit --platform ios --latest",
+    "check:firebase": "node --no-warnings scripts/check-firebase.mjs",
+    "test": "node --no-warnings scripts/test-questions.mjs && node --no-warnings scripts/test-matchmaking.mjs && node --no-warnings scripts/test-moderation.mjs",
+    "emulators": "npx -y firebase-tools@latest emulators:start --only database,auth --project demo-wordduel",
+    "test:online": "node --no-warnings scripts/test-online.mjs"
+  },
+  "dependencies": {
+    "@expo-google-fonts/plus-jakarta-sans": "^0.4.1",
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "expo": "~58.0.21",
+    "expo-asset": "~58.0.19",
+    "expo-audio": "~58.0.10",
+    "expo-constants": "~58.0.13",
+    "expo-font": "~58.0.11",
+    "expo-haptics": "~58.0.7",
+    "expo-notifications": "~58.1.6",
+    "expo-speech": "~58.0.3",
+    "expo-splash-screen": "~58.0.12",
+    "expo-status-bar": "~58.0.4",
+    "firebase": "^13.1.0",
+    "react": "19.3.0",
+    "react-native": "^0.88.1",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-svg": "^15.16.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}
