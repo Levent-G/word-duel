@@ -16,3 +16,7 @@ android/
 
 # Raw phone screenshots (the resized App Store sets are kept)
 store/screenshots/raw/
+
+# Firebase service account keys are never committed
+*firebase-adminsdk*.json
+*service-account*.json

@@ -1,4 +1,4 @@
-import { WORDS_BY_LEVEL, getWord, lower, shortMeaning } from '../data/dictionary';
+import { WORDS_BY_LEVEL, getWord, lower, rememberWord, shortMeaning } from '../data/dictionary';
 import { pickWords } from './wordPicker';
 
 export function shuffle(list) {
@@ -69,16 +69,32 @@ function makeQuestion(word, forcedType) {
   return { type, word, prompt: 'Boşluğa hangi kelime gelir?', text: sentence, options };
 }
 
-/** Compact form sent to the other player: word id, type and option ids (both apps share the dictionary). */
+/**
+ * Compact form sent to the other player: word id, type and option ids. The words travel along too (`x`),
+ * because the dictionary comes from the shared Firebase word base and the other player's app version
+ * may not have every word yet.
+ */
 export function serializeQuestions(questions) {
-  return questions.map((q) => ({ w: q.word.id, t: q.type, o: q.options.map((o) => o.id), s: q.reason === 'shared' ? 1 : 0 }));
+  return questions.map((q) => {
+    const words = [q.word, ...q.options.map((o) => getWord(o.id))].filter(Boolean);
+    const x = Object.fromEntries(words.map((w) => [w.id, [w.en, w.tr, w.l, w.p, w.e, w.et]]));
+    return { w: q.word.id, t: q.type, o: q.options.map((o) => o.id), s: q.reason === 'shared' ? 1 : 0, x };
+  });
+}
+
+/** Local word first, else the copy the host sent along. */
+function specWord(sp, id) {
+  const w = getWord(id);
+  if (w) return w;
+  const [en, tr, l, p, e, et] = sp.x?.[id] ?? [id, '?', '', '', '', ''];
+  return rememberWord({ id, en, tr, l, p, e, et });
 }
 
 /** Rebuilds questions from `serializeQuestions`; `mine` is this player's history, used for the review tag. */
 export function hydrateQuestions(specs, mine) {
   return specs.map((sp) => {
-    const word = getWord(sp.w);
-    const options = sp.o.map(getWord).map((w) => ({ id: w.id, label: sp.t === 'meaning' ? shortMeaning(w) : w.en }));
+    const word = specWord(sp, sp.w);
+    const options = sp.o.map((id) => specWord(sp, id)).map((w) => ({ id: w.id, label: sp.t === 'meaning' ? shortMeaning(w) : w.en }));
     const prompt = { meaning: 'Bu kelimenin anlamı ne?', reverse: 'İngilizcesi hangisi?', blank: 'Boşluğa hangi kelime gelir?' }[sp.t];
     const text = sp.t === 'meaning' ? word.en : sp.t === 'reverse' ? shortMeaning(word) : blankSentence(word);
     const reason = sp.s ? 'shared' : mine(word.id)?.last === 0 ? 'review' : null;

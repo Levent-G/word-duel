@@ -134,5 +134,23 @@ console.log('weights C2', levelWeights('C2').map((w) => w.toFixed(3)).join(' '))
   console.log(`bot has seen ${pct(seen, sample.length)} of sample words`);
 }
 
+// 6. An opponent whose app lacks some words (older dictionary) still gets playable questions.
+{
+  const { serializeQuestions, hydrateQuestions } = await import('../src/game/questions.js');
+  const { WORD_BY_ID } = await import('../src/data/dictionary.js');
+  const qs = buildQuestions({ count: 10, level: 'B1', histories: [() => null, () => null], reviewIds: [] });
+  const specs = JSON.parse(JSON.stringify(serializeQuestions(qs)));
+  const missing = specs.flatMap((s) => [s.w, ...s.o]).slice(0, 8);
+  const saved = missing.map((id) => [id, WORD_BY_ID[id]]);
+  for (const id of missing) delete WORD_BY_ID[id];
+  const back = hydrateQuestions(specs, () => null);
+  back.forEach((q, i) => {
+    if (q.word.en !== qs[i].word.en || q.text !== qs[i].text) fail(`hydrate without local word: question ${i}`);
+    if (q.options.map((o) => o.label).join('|') !== qs[i].options.map((o) => o.label).join('|')) fail(`hydrate options: question ${i}`);
+  });
+  if (missing.some((id) => !getWord(id))) fail('remote words not remembered for summary screens');
+  for (const [id, w] of saved) WORD_BY_ID[id] = w;
+}
+
 console.log(failures ? `${failures} failures` : 'all checks passed');
 process.exit(failures ? 1 : 0);

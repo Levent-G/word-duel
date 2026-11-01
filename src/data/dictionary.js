@@ -11,6 +11,12 @@ export const WORDS_BY_LEVEL = LEVELS.reduce((acc, l) => {
 
 export const getWord = (id) => WORD_BY_ID[id];
 
+/** Words an online opponent's newer app sent along; kept for this session so summary/detail screens can show them. */
+export const rememberWord = (w) => {
+  WORD_BY_ID[w.id] ??= w;
+  return WORD_BY_ID[w.id];
+};
+
 /** First sense of a translation, for compact answer buttons ("haklı çıkarmak / temize çıkarmak" → "haklı çıkarmak"). */
 export const shortMeaning = (w) => w.tr.split(/\s*[/;]\s*/)[0];
 

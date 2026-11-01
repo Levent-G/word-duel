@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "words": "node scripts/build-words.mjs",
+    "words": "node --no-warnings scripts/pull-words.mjs",
+    "words:local": "node scripts/build-words.mjs",
     "brand": "node scripts/build-brand.mjs",
     "sounds": "node scripts/build-sounds.mjs",
     "screenshots": "node scripts/resize-screenshots.mjs",
@@ -41,6 +42,7 @@
     "react-native-svg": "^15.16.0"
   },
   "devDependencies": {
-    "@resvg/resvg-js": "^2.6.2"
+    "@resvg/resvg-js": "^2.6.2",
+    "firebase-admin": "^14.5.0"
   }
 }
