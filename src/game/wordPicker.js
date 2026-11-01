@@ -1,4 +1,4 @@
-import { LEVELS, WORDS_BY_LEVEL, getWord } from '../data/dictionary';
+import { LEVELS, getWord, inDict, wordsByLevel } from '../data/dictionary';
 
 /**
  * Word selection for a match.
@@ -98,17 +98,19 @@ function candidates(levelWords, reviewPool, taken) {
  * @param histories  one lookup per player at the table
  * @param reviewIds  ids any player has to learn (cheap way to make sure they are considered)
  * @param firstId    word that must open the set (practice from a word page)
+ * @param dv         highest dictionary version every player has (default: this app's)
  * @returns [{ word, reason }]  reason: 'shared' (everyone's review), 'review' (yours), or null
  */
-export function pickWords({ count, level, histories, reviewIds = [], firstId }) {
+export function pickWords({ count, level, histories, reviewIds = [], firstId, dv }) {
   const now = Date.now();
+  const byLevel = wordsByLevel(dv);
   const taken = new Set();
   const picked = [];
   const weights = levelWeights(level);
   const reviewByLevel = {};
   for (const id of reviewIds) {
     const w = getWord(id);
-    if (w) (reviewByLevel[w.l] ??= []).push(w);
+    if (w && inDict(w, dv)) (reviewByLevel[w.l] ??= []).push(w);
   }
 
   const reasonFor = (word) => {
@@ -117,7 +119,7 @@ export function pickWords({ count, level, histories, reviewIds = [], firstId }) 
     return st[0] === 'learn' ? 'review' : null;
   };
 
-  if (firstId && getWord(firstId)) {
+  if (firstId && getWord(firstId) && inDict(getWord(firstId), dv)) {
     const w = getWord(firstId);
     taken.add(w.id);
     picked.push({ word: w, reason: reasonFor(w) });
@@ -129,7 +131,7 @@ export function pickWords({ count, level, histories, reviewIds = [], firstId }) 
   while (picked.length < count) {
     const lvl = LEVELS[weightedIndex(weights)];
     const reviewsSoFar = picked.filter((p) => needsReview(p.word)).length;
-    let pool = candidates(WORDS_BY_LEVEL[lvl], reviewsSoFar < reviewCap ? (reviewByLevel[lvl] ?? []) : [], taken);
+    let pool = candidates(byLevel[lvl], reviewsSoFar < reviewCap ? (reviewByLevel[lvl] ?? []) : [], taken);
     if (reviewsSoFar >= reviewCap) pool = pool.filter((w) => !needsReview(w));
     if (!pool.length) continue;
     // Squaring sharpens the preference while still leaving some variety.

@@ -11,6 +11,21 @@ export const WORDS_BY_LEVEL = LEVELS.reduce((acc, l) => {
 
 export const getWord = (id) => WORD_BY_ID[id];
 
+/**
+ * Dictionary version: every word carries the version it arrived in (`dv`, missing = 1, the 1.0 app).
+ * Online matches against an older app only use words that app also has.
+ */
+export const DICT_VERSION = RAW.reduce((m, w) => Math.max(m, w.dv ?? 1), 1);
+export const inDict = (w, dv = DICT_VERSION) => (w.dv ?? 1) <= dv;
+const byLevelCache = {};
+export function wordsByLevel(dv = DICT_VERSION) {
+  if (dv >= DICT_VERSION) return WORDS_BY_LEVEL;
+  return (byLevelCache[dv] ??= LEVELS.reduce((acc, l) => {
+    acc[l] = WORDS_BY_LEVEL[l].filter((w) => inDict(w, dv));
+    return acc;
+  }, {}));
+}
+
 /** Words an online opponent's newer app sent along; kept for this session so summary/detail screens can show them. */
 export const rememberWord = (w) => {
   WORD_BY_ID[w.id] ??= w;

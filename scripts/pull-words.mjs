@@ -49,6 +49,10 @@ const before = existsSync(out) ? JSON.parse(readFileSync(out, 'utf8')) : [];
 const oldIdByEn = new Map(before.map((w) => [w.en.toLowerCase(), w.id]));
 // Only ids whose old word still exists are reserved; a word renamed in the admin panel keeps its id.
 const docWords = new Set(docs.map((d) => String(d.word ?? '').trim().toLowerCase()));
+// Dictionary version: words already in words.json keep theirs (missing = 1, the 1.0 app); words new
+// in this pull get the next one. Online matches against older apps only use words they have.
+const prevDv = new Map(before.map((w) => [w.id, w.dv ?? 1]));
+const nextDv = before.reduce((m, w) => Math.max(m, w.dv ?? 1), 1) + 1;
 const reserved = new Set(before.filter((w) => docWords.has(w.en.toLowerCase())).map((w) => w.id));
 
 const seen = new Set();
@@ -67,7 +71,10 @@ for (const w of docs) {
   // A Firestore id that an older word already uses here gets a prefixed id (kept on later pulls).
   const id = oldIdByEn.get(key) ?? (reserved.has(w.id) ? `fs_${w.id}` : w.id);
   if (!oldIdByEn.has(key) && reserved.has(id)) throw new Error(`Id ${id} (${en}) clashes with an older word`);
-  words.push({ id, en, tr, l: w.level, p: POS[w.partOfSpeech] ?? w.partOfSpeech ?? '', e: ex.en, et: ex.tr });
+  const entry = { id, en, tr, l: w.level, p: POS[w.partOfSpeech] ?? w.partOfSpeech ?? '', e: ex.en, et: ex.tr };
+  const dv = prevDv.get(id) ?? nextDv;
+  if (dv > 1) entry.dv = dv;
+  words.push(entry);
 }
 if (words.length < 1000) throw new Error(`Only ${words.length} words came back; words.json left untouched`);
 

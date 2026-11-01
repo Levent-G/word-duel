@@ -1,4 +1,4 @@
-import { WORDS_BY_LEVEL, getWord, lower, rememberWord, shortMeaning } from '../data/dictionary';
+import { getWord, lower, rememberWord, shortMeaning, wordsByLevel } from '../data/dictionary';
 import { pickWords } from './wordPicker';
 
 export function shuffle(list) {
@@ -25,8 +25,8 @@ function blankSentence(word) {
 }
 
 /** Wrong options: same level (and part of speech when possible), never sharing a spelling or a meaning with another option. */
-function distractors(word) {
-  const pool = WORDS_BY_LEVEL[word.l];
+function distractors(word, byLevel) {
+  const pool = byLevel[word.l];
   const usedEn = new Set([word.en.toLowerCase()]);
   const usedTr = new Set([lower(shortMeaning(word))]);
   const out = [];
@@ -45,13 +45,13 @@ function distractors(word) {
   return out;
 }
 
-function makeQuestion(word, forcedType) {
+function makeQuestion(word, forcedType, byLevel) {
   const sentence = blankSentence(word);
   const roll = Math.random();
   let type = forcedType ?? (roll < 0.55 ? 'meaning' : roll < 0.8 ? 'reverse' : 'blank');
   if (type === 'blank' && !sentence) type = 'meaning';
 
-  const wrong = distractors(word);
+  const wrong = distractors(word, byLevel);
   if (type === 'meaning') {
     return {
       type,
@@ -108,10 +108,12 @@ export function hydrateQuestions(specs, mine) {
  * @param histories one word-history lookup per player (see wordPicker)
  * @param reviewIds ids any player still has to learn
  * @param firstId   optional word that must come first (practice from word detail)
+ * @param dv        highest dictionary version every player has (online opponent on an older app)
  */
-export function buildQuestions({ count, level, histories, reviewIds, firstId }) {
-  return pickWords({ count, level, histories, reviewIds, firstId }).map(({ word, reason }, i) => ({
-    ...makeQuestion(word, i === 0 && firstId ? 'meaning' : undefined),
+export function buildQuestions({ count, level, histories, reviewIds, firstId, dv }) {
+  const byLevel = wordsByLevel(dv);
+  return pickWords({ count, level, histories, reviewIds, firstId, dv }).map(({ word, reason }, i) => ({
+    ...makeQuestion(word, i === 0 && firstId ? 'meaning' : undefined, byLevel),
     reason,
   }));
 }

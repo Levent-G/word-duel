@@ -121,13 +121,14 @@ function Root() {
         return { mode: 'duel', kind: 'bot', opponent, questions };
       },
       /** Question builder handed to the online host once the guest's history is known. */
-      buildOnlineSpecs: (guestHistory) =>
+      buildOnlineSpecs: (guestHistory, dv) =>
         serializeQuestions(
           buildQuestions({
             count: DUEL_QUESTIONS,
             level: state.settings.level,
             histories: [(id) => state.words[id], guestHistory],
             reviewIds: reviewIds(state.words),
+            dv,
           }),
         ),
       me: {

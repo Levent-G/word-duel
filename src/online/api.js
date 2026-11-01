@@ -16,6 +16,7 @@ import {
 
 import { deleteUser } from 'firebase/auth';
 
+import { DICT_VERSION } from '../data/dictionary';
 import { settle } from '../game/scoring';
 import { displayName } from '../moderation';
 import { currentUser, db, ensureSignedIn } from './firebase';
@@ -77,6 +78,8 @@ export async function fetchHistory(uid) {
 /** Creates the match as host: builds the questions from both histories and tells the guest. */
 async function hostMatch({ me, guest, level, kind, buildSpecs }) {
   const guestHistory = await fetchHistory(guest.uid);
+  // Apps before dictionary versions (1.0) send no dv: they only know version 1 words.
+  const guestDv = guest.dv ?? 1;
   const matchRef = push(r('matches'));
   await set(matchRef, {
     kind,
@@ -84,10 +87,10 @@ async function hostMatch({ me, guest, level, kind, buildSpecs }) {
     at: serverTimestamp(),
     order: [me.uid, guest.uid],
     players: {
-      [me.uid]: { name: me.name, rating: me.rating },
-      [guest.uid]: { name: guest.name, rating: guest.rating },
+      [me.uid]: { name: me.name, rating: me.rating, dv: DICT_VERSION },
+      [guest.uid]: { name: guest.name, rating: guest.rating, dv: guestDv },
     },
-    questions: buildSpecs(guestHistory),
+    questions: buildSpecs(guestHistory, Math.min(DICT_VERSION, guestDv)),
   });
   await set(r(`pending/${guest.uid}`), { matchId: matchRef.key, at: serverTimestamp() });
   return matchRef.key;
@@ -162,7 +165,7 @@ export function joinQueue({ level, me, buildSpecs, onMatch, onError }) {
       for (const [k, v] of Object.entries(queue)) {
         if (v.claimedBy ? now - (v.claimedAt ?? 0) > CLAIM_STALE_MS : now - (v.beat ?? v.at) > STALE_MS * 3) delete queue[k];
       }
-      const entry = { name: self.name, rating: self.rating, at: mine?.at ?? joinedAt, beat: now };
+      const entry = { name: self.name, rating: self.rating, at: mine?.at ?? joinedAt, beat: now, dv: DICT_VERSION };
       if (self.blocked?.length) entry.blocked = self.blocked.slice(0, 50);
       const best = pickPartner(queue, uid, entry, now);
       if (best) {
@@ -188,7 +191,7 @@ export function joinQueue({ level, me, buildSpecs, onMatch, onError }) {
       // We had already claimed someone; release them so they can be matched by others.
       runTransaction(r(`queue/${level}/${partner.uid}`), (cur) => {
         if (cur == null) return null;
-        return cur.claimedBy === uid ? { name: cur.name, rating: cur.rating, at: cur.at, beat: Date.now() } : undefined;
+        return cur.claimedBy === uid ? { name: cur.name, rating: cur.rating, at: cur.at, beat: Date.now(), ...(cur.dv ? { dv: cur.dv } : {}) } : undefined;
       }).catch(() => {});
       return;
     }
@@ -356,7 +359,7 @@ export async function joinRoom({ code, me, onMatch }) {
     onMatch(m);
   });
   const res = await runTransaction(r(`rooms/${code}/guest`), (cur) =>
-    cur ? undefined : { uid, name: me.name, rating },
+    cur ? undefined : { uid, name: me.name, rating, dv: DICT_VERSION },
   );
   if (!res.committed) {
     stopPending();
@@ -461,7 +464,7 @@ export function requestRematch({ matchId, me, buildSpecs, onMatch, onState }) {
         get(r(`ratings/${oppUid}/rating`)),
       ]);
       const self = { uid, name: me.name, rating: myRating.val() ?? START_RATING };
-      const guest = { uid: oppUid, name: match.players[oppUid].name, rating: theirRating.val() ?? START_RATING };
+      const guest = { uid: oppUid, name: match.players[oppUid].name, rating: theirRating.val() ?? START_RATING, dv: match.players[oppUid].dv ?? 1 };
       const newId = await hostMatch({ me: self, guest, level: match.level, kind: match.kind, buildSpecs });
       onMatch({ matchId: newId, role: 'host' });
     });

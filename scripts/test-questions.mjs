@@ -152,5 +152,21 @@ console.log('weights C2', levelWeights('C2').map((w) => w.toFixed(3)).join(' '))
   for (const [id, w] of saved) WORD_BY_ID[id] = w;
 }
 
+// 7. Against a 1.0 app (dictionary version 1) every question word and option comes from version 1.
+{
+  const { DICT_VERSION } = await import('../src/data/dictionary.js');
+  if (DICT_VERSION < 2) fail('expected new words with dv >= 2');
+  let newOnes = 0;
+  for (let i = 0; i < 30; i++) {
+    for (const level of LEVELS) {
+      const qs = buildQuestions({ count: 10, level, histories: [() => null, () => null], reviewIds: [], dv: 1 });
+      for (const q of qs) for (const id of [q.word.id, ...q.options.map((o) => o.id)]) if ((getWord(id).dv ?? 1) > 1) newOnes++;
+    }
+  }
+  if (newOnes) fail(`${newOnes} new-dictionary words sent to a 1.0 opponent`);
+  const all = buildQuestions({ count: 200, level: 'B2', histories: [() => null], reviewIds: [] });
+  console.log(`dictionary v${DICT_VERSION}: v1-only matches clean, own matches use new words (${all.filter((q) => (q.word.dv ?? 1) > 1).length}/200)`);
+}
+
 console.log(failures ? `${failures} failures` : 'all checks passed');
 process.exit(failures ? 1 : 0);
