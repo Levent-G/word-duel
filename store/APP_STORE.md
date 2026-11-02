@@ -42,7 +42,7 @@ HAFTALIK LİGLER
 • Online ve bot sıralamaları ayrı tutulur.
 
 AKILLI KELİME SEÇİMİ
-• 6.800'den fazla kelime, A1'den C2'ye.
+• 8.900'den fazla kelime, A1'den C2'ye.
 • Sorular iki oyuncunun da bilmediği ya da henüz görmediği kelimelerden seçilir.
 • Yanlış bildiğin kelimeler Öğrenilecekler listene eklenir ve sonraki maçlarda tekrar sorulur.
 • Üç soru tipi: anlamını bul, İngilizcesini bul, cümledeki boşluğu doldur.
@@ -75,6 +75,22 @@ https://leventgulsum-word-duel.expo.app
 https://leventgulsum-word-duel.expo.app/privacy
 
 ### Bu sürümdeki yenilikler
+
+**1.2.0**
+
+```
+• 2.000'den fazla yeni kelime: toplam 8.900+ kelime
+• Seviyeler CEFR'e göre yeniden düzenlendi
+• Daha doğru çeviriler ve örnek cümleler
+```
+
+English:
+
+```
+• 2,000+ new words: 8,900+ words in total
+• Levels rebalanced to match CEFR
+• More accurate translations and example sentences
+```
 
 **1.1.0**
 
@@ -156,7 +172,7 @@ WEEKLY LEAGUES
 Bronze, Silver, Gold, Platinum and Diamond. The top 10 of each week move up, the bottom 5 move down.
 
 SMART WORD CHOICE
-• More than 6,800 words from A1 to C2, with Turkish meanings, pronunciation and example sentences.
+• More than 8,900 words from A1 to C2, with Turkish meanings, pronunciation and example sentences.
 • Questions come from words neither player knows or has seen yet.
 • Words you get wrong go to your review list and come back in later matches.
 • Three question types: find the meaning, find the English word, fill in the blank.
